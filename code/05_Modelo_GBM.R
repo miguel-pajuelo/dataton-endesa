@@ -42,8 +42,8 @@ df_tr <- as.data.frame(read_excel(ruta_tr))
 df_ts <- as.data.frame(read_excel(ruta_ts))
 
 target <- "Net_Power"
-columnas_ignorar <- c("Date", "Net_Power", "Net_Power_lag1", "Net_Power_lag2", "Net_Power_lag4")
-features <- setdiff(names(df_tr), columnas_ignorar)
+# Ignorar Date y TODOS los retardos de Net_Power para no tener NAs en test
+features <- setdiff(names(df_tr), c("Date", grep("^Net_Power", names(df_tr), value = TRUE)))
 
 df_model_tr <- na.omit(df_tr[, c(target, features)])
 
@@ -104,6 +104,8 @@ gbm_final <- train(
 )
 
 pred_test_gbm <- predict(gbm_final, newdata = df_ts[, features])
+stopifnot(length(pred_test_gbm) == 192)
+stopifnot(sum(is.na(pred_test_gbm)) == 0)
 
 # 6. Exportación ---------------------------------------------------------------
 ruta_entrega_gbm <- file.path(dir_salida, "predicciones_GBM.txt")

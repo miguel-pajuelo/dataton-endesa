@@ -32,20 +32,37 @@ ruta_gbm <- buscar_fichero("predicciones_GBM.txt")
 modelos_cargados <- list()
 
 if (!is.na(ruta_mlp)) {
-  modelos_cargados[["MLP"]] <- read.table(ruta_mlp, header = FALSE)[[1]]
-  cat("Cargado MLP:    ", ruta_mlp, "\n")
+  vals_mlp <- read.table(ruta_mlp, header = FALSE)[[1]]
+  if (length(vals_mlp) == 192) {
+    modelos_cargados[["MLP"]] <- vals_mlp
+    cat("Cargado MLP:    ", ruta_mlp, "(192 filas)\n")
+  } else {
+    warning(paste("¡ALERTA! El archivo MLP tiene", length(vals_mlp), "filas (debe tener 192). Se ignora."))
+  }
 }
+
 if (!is.na(ruta_xgb)) {
-  modelos_cargados[["XGBoost"]] <- read.table(ruta_xgb, header = FALSE)[[1]]
-  cat("Cargado XGBoost:", ruta_xgb, "\n")
+  vals_xgb <- read.table(ruta_xgb, header = FALSE)[[1]]
+  if (length(vals_xgb) == 192) {
+    modelos_cargados[["XGBoost"]] <- vals_xgb
+    cat("Cargado XGBoost:", ruta_xgb, "(192 filas)\n")
+  } else {
+    warning(paste("¡ALERTA! El archivo XGBoost tiene", length(vals_xgb), "filas (debe tener 192). Se ignora."))
+  }
 }
+
 if (!is.na(ruta_gbm)) {
-  modelos_cargados[["GBM"]] <- read.table(ruta_gbm, header = FALSE)[[1]]
-  cat("Cargado GBM:    ", ruta_gbm, "\n")
+  vals_gbm <- read.table(ruta_gbm, header = FALSE)[[1]]
+  if (length(vals_gbm) == 192) {
+    modelos_cargados[["GBM"]] <- vals_gbm
+    cat("Cargado GBM:    ", ruta_gbm, "(192 filas)\n")
+  } else {
+    warning(paste("¡ALERTA! El archivo GBM tiene", length(vals_gbm), "filas (debe tener 192). Se ignora."))
+  }
 }
 
 if (length(modelos_cargados) < 2) {
-  stop("Se necesitan al menos 2 modelos generados para hacer un ensamble. Ejecuta antes los scripts de MLP, XGBoost o GBM.")
+  stop("Se necesitan al menos 2 modelos válidos de EXACTAMENTE 192 filas cada uno.")
 }
 
 # 2. Ponderaciones del Ensamble (Blending) --------------------------------------

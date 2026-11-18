@@ -48,9 +48,8 @@ df_ts <- as.data.frame(read_excel(ruta_ts))
 
 target <- "Net_Power"
 
-# Variables predictoras completas
-columnas_ignorar <- c("Date", "Net_Power", "Net_Power_lag1", "Net_Power_lag2", "Net_Power_lag4")
-features <- setdiff(names(df_tr), columnas_ignorar)
+# Variables predictoras completas (excluyendo Date y TODOS los retardos de Net_Power)
+features <- setdiff(names(df_tr), c("Date", grep("^Net_Power", names(df_tr), value = TRUE)))
 
 # Limpiar NAs iniciales debidos a retardos
 df_model_tr <- na.omit(df_tr[, c(target, features)])
